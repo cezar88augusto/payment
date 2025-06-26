@@ -13,8 +13,8 @@ public class BillService {
     private final BillRepository repository;
     private final BillValidator billValidator;
 
-    public void save(Bill bill) {
+    public Bill save(Bill bill) {
         billValidator.checkBillAlreadyRegistered(bill);
-        repository.save(bill);
+        return repository.save(bill);
     }
 }
