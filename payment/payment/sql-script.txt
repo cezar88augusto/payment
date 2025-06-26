@@ -1,0 +1,8 @@
+CREATE TABLE bill (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    due_date DATE NOT NULL,
+    payment_date DATE ,
+    amount NUMERIC(19, 2) NOT NULL,
+    description VARCHAR(255),
+    status VARCHAR(50)
+);

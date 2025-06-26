@@ -1,0 +1,32 @@
+# Rodar container Postgres na versão 16.3
+docker run -d --name bill -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres -e POSTGRES_DB=bill -p 5433:5433 postgres:16.3
+
+-d = rodar background
+
+
+# Rodar PGADMIN4
+docker run --name pgadmin4 -p 15432:80 -e PGADMIN_DEFAULT_EMAIL=admin@admin.com -e PGADMIN_DEFAULT_PASSWORD=admin dpage/pgadmin4:8.9
+
+
+
+# Inserir link no browser:
+http://localhost:15432/login?next=/
+
+
+
+# Vai dar erro... Motivo: conectar os containers em uma rede em comum: (matar os containers antes)
+docker network create payment-network
+
+
+
+# Apontar pra network
+docker run --name bill -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres -e POSTGRES_DB=bill -p 5432:5432 --network payment-network postgres:16.3
+
+docker run --name pgadmin4 -p 15432:80 --network payment-network -e PGADMIN_DEFAULT_EMAIL=admin@admin.com -e PGADMIN_DEFAULT_PASSWORD=admin dpage/pgadmin4:8.9
+
+
+
+# Rodar em BACKGROUND:
+docker run --name bill -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres -e POSTGRES_DB=payment -p 5432:5432 -d --network payment-network postgres:16.3
+
+docker run --name pgadmin4 -p 15432:80 -d --network payment-network -e PGADMIN_DEFAULT_EMAIL=admin@admin.com -e PGADMIN_DEFAULT_PASSWORD=admin dpage/pgadmin4:8.9
