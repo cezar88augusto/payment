@@ -1,7 +1,9 @@
 package com.project.payment.controller;
 
 import com.project.payment.controller.dto.BillDTO;
+import com.project.payment.controller.dto.ErrorResponseDTO;
 import com.project.payment.controller.mapper.BillMapper;
+import com.project.payment.exceptions.AlreadyRegisteredBillException;
 import com.project.payment.service.BillService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -22,10 +24,15 @@ public class BillController {
     private final BillMapper mapper;
 
     @PostMapping
-    public ResponseEntity<Object> salvar(@RequestBody @Valid BillDTO billDTO) {
-        var bill = mapper.toBillEntity(billDTO);
-        service.save(bill);
+    public ResponseEntity<Object> save(@RequestBody @Valid BillDTO billDTO) {
+        try {
+            var bill = mapper.toBillEntity(billDTO);
+            service.save(bill);
 
-        return null;
+            return null;
+        } catch (AlreadyRegisteredBillException exception) {
+            var errorResponse = ErrorResponseDTO.conflit(exception.getMessage());
+            return ResponseEntity.status(errorResponse.status()).body(errorResponse);
+        }
     }
 }
