@@ -12,9 +12,12 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
+
+import static java.math.BigDecimal.*;
 
 @Service
 @RequiredArgsConstructor
@@ -64,5 +67,12 @@ public class BillService {
     public Bill findBillById(UUID id) {
         return repository.findById(id)
                 .orElseThrow(() -> new BillNotFoundException("Conta não encontrada."));
+    }
+
+    public BigDecimal sumBillAmountByPaymentDateBetween(LocalDate startDate, LocalDate endDate) {
+        billValidator.validateSearchPeriodForSumOfBills(startDate, endDate);
+
+        return repository.sumBillAmountByPaymentDateBetween(startDate, endDate)
+                .orElse(ZERO);
     }
 }

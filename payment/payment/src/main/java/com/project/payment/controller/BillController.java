@@ -6,6 +6,7 @@ import com.project.payment.controller.dto.UpdateBillDTO;
 import com.project.payment.controller.dto.UpdateBillStatusDTO;
 import com.project.payment.exceptions.AlreadyRegisteredBillException;
 import com.project.payment.exceptions.BillNotFoundException;
+import com.project.payment.exceptions.InvalidPeriodException;
 import com.project.payment.model.Bill;
 import com.project.payment.service.BillService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -124,6 +125,28 @@ public class BillController {
             return ResponseEntity.ok(bill);
         } catch (BillNotFoundException exception) {
             var errorResponse = ErrorResponseDTO.notFound("Conta não encontrada.");
+            return ResponseEntity.status(errorResponse.status()).body(errorResponse);
+        }
+    }
+
+    @GetMapping("/total")
+    @Operation(
+            summary = "Total amount of bills by period",
+            description = "Retorna a soma dos valores pagos dentro de um intervalo de datas de pagamento."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Soma do período calculada com sucesso."),
+            @ApiResponse(responseCode = "400", description = "Parâmetros obrigatórios não informados.")
+    })
+    public ResponseEntity<Object> getTotalByPaymentPeriod(
+            @RequestParam(value = "startDate") @Parameter(description = "Data inicial do pagamento (YYYY-MM-DD)", required = true) LocalDate startDate,
+            @RequestParam(value = "endDate") @Parameter(description = "Data final do pagamento (YYYY-MM-DD)", required = true) LocalDate endDate
+    ) {
+        try {
+            var total = service.sumBillAmountByPaymentDateBetween(startDate, endDate);
+            return ResponseEntity.ok(total);
+        } catch (InvalidPeriodException exception) {
+            var errorResponse = ErrorResponseDTO.invalidPeriod(exception.getMessage());
             return ResponseEntity.status(errorResponse.status()).body(errorResponse);
         }
     }
