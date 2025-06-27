@@ -26,7 +26,6 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("payments")
-@Tag(name = "bill")
 @RequiredArgsConstructor
 public class BillController {
 
@@ -68,10 +67,10 @@ public class BillController {
             service.updateBillFields(billId, updateBillDTO);
             return ResponseEntity.ok().build();
         } catch (BillNotFoundException exception) {
-            var errorResponse = ErrorResponseDTO.notFound("Conta não encontrada.");
+            var errorResponse = ErrorResponseDTO.notFound(exception.getMessage());
             return ResponseEntity.status(errorResponse.status()).body(errorResponse);
         } catch (AlreadyRegisteredBillException exception) {
-            var errorResponse = ErrorResponseDTO.conflit("Conta com estas informações já foi cadastrada!");
+            var errorResponse = ErrorResponseDTO.conflit(exception.getMessage());
             return ResponseEntity.status(errorResponse.status()).body(errorResponse);
         }
     }
@@ -90,7 +89,7 @@ public class BillController {
             service.updateBillStatus(billId, updateBillStatusDTO.status());
             return ResponseEntity.ok().build();
         } catch (BillNotFoundException exception) {
-            var errorResponse = ErrorResponseDTO.notFound("Conta não encontrada.");
+            var errorResponse = ErrorResponseDTO.notFound(exception.getMessage());
             return ResponseEntity.status(errorResponse.status()).body(errorResponse);
         }
     }
@@ -124,7 +123,7 @@ public class BillController {
             var bill = service.findBillById(id);
             return ResponseEntity.ok(bill);
         } catch (BillNotFoundException exception) {
-            var errorResponse = ErrorResponseDTO.notFound("Conta não encontrada.");
+            var errorResponse = ErrorResponseDTO.notFound(exception.getMessage());
             return ResponseEntity.status(errorResponse.status()).body(errorResponse);
         }
     }
@@ -132,7 +131,7 @@ public class BillController {
     @GetMapping("/total")
     @Operation(
             summary = "Total amount of bills by period",
-            description = "Retorna a soma dos valores pagos dentro de um intervalo de datas de pagamento."
+            description = "Retorna a soma dos valores dentro de um intervalo de datas de pagamento."
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Soma do período calculada com sucesso."),

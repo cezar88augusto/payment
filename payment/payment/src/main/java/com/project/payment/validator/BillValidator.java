@@ -22,7 +22,7 @@ public class BillValidator {
                 .isPresent();
 
         if (isBillRegisterd) {
-            throw new AlreadyRegisteredBillException("Conta com estas informações já foi cadastrada!");
+            throw new AlreadyRegisteredBillException("Uma conta com estas informações já foi cadastrada!");
         }
     }
 
