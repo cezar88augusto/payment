@@ -38,7 +38,7 @@ public class BillController {
     })
     public ResponseEntity<Object> saveBill(@RequestBody @Valid SaveBillDTO saveBillDTO) {
         try {
-            var savedBill = service.save(saveBillDTO);
+            var savedBill = service.saveBill(saveBillDTO);
             var location = ServletUriComponentsBuilder
                     .fromCurrentRequest()
                     .buildAndExpand(savedBill.getId())
@@ -63,7 +63,7 @@ public class BillController {
             @RequestBody @Valid UpdateBillDTO updateBillDTO
     ) {
         try {
-            service.updateBillFields(billId, updateBillDTO);
+            service.updateBill(billId, updateBillDTO);
             return ResponseEntity.ok().build();
         } catch (BillNotFoundException exception) {
             var errorResponse = ErrorResponseDTO.notFound(exception.getMessage());

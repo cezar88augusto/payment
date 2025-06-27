@@ -3,7 +3,6 @@ package com.project.payment.service;
 import com.project.payment.controller.dto.SaveBillDTO;
 import com.project.payment.controller.dto.UpdateBillDTO;
 import com.project.payment.controller.mapper.BillMapper;
-import com.project.payment.exception.BillNotFoundException;
 import com.project.payment.model.Bill;
 import com.project.payment.repository.BillRepository;
 import com.project.payment.validator.BillValidator;
@@ -28,14 +27,14 @@ public class BillService {
     private final BillValidator billValidator;
     private final BillMapper mapper;
 
-    public Bill save(SaveBillDTO saveBillDTO) {
+    public Bill saveBill(SaveBillDTO saveBillDTO) {
         var bill = mapper.toBillEntity(saveBillDTO);
         billValidator.checkBillAlreadyRegistered(bill);
 
         return repository.save(bill);
     }
 
-    public void updateBillFields(UUID billId, UpdateBillDTO updateBillDTO) {
+    public void updateBill(UUID billId, UpdateBillDTO updateBillDTO) {
         var bill = billValidator.checkExistingBill(billId);
         mapper.updateBillFromDTO(updateBillDTO, bill);
         billValidator.checkBillAlreadyRegistered(bill);
