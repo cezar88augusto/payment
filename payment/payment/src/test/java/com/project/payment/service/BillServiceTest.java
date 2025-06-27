@@ -107,7 +107,7 @@ class BillServiceTest {
     }
 
     @Test
-    void findBills_successWhenCalled_returnsPagedResult() {
+    void findBills_successWhenGettingBills_returnsBillsPagedResult() {
         var pageable = PageRequest.of(PAGE_NUMBER, PAGE_SIZE);
         var matcher = mockMatcher();
         var bill = mockBill();
@@ -125,7 +125,7 @@ class BillServiceTest {
     }
 
     @Test
-    void findBillById_successWhenBillExists_returnsBill() {
+    void findBillById_successWhenFindingBillById_returnsBill() {
         var bill = mockBillEntity();
 
         when(billValidator.checkExistingBill(BILL_ID)).thenReturn(bill);
@@ -138,7 +138,7 @@ class BillServiceTest {
     }
 
     @Test
-    void sumBillAmountByPaymentDateBetween_successWhenValidDates_returnsSum() {
+    void sumBillAmountByPaymentDateBetween_successWhenValidatingDates_returnsSum() {
         var expected = TEN;
 
         when(repository.sumBillAmountByPaymentDateBetween(START_DATE, END_DATE)).thenReturn(Optional.of(expected));
