@@ -3,7 +3,7 @@ package com.project.payment.controller;
 import com.project.payment.controller.dto.ErrorResponseDTO;
 import com.project.payment.controller.dto.SaveBillDTO;
 import com.project.payment.controller.dto.UpdateBillDTO;
-import com.project.payment.controller.mapper.BillMapper;
+import com.project.payment.controller.dto.UpdateBillStatusDTO;
 import com.project.payment.exceptions.AlreadyRegisteredBillException;
 import com.project.payment.exceptions.BillNotFoundException;
 import com.project.payment.service.BillService;
@@ -26,15 +26,14 @@ import java.util.UUID;
 public class BillController {
 
     private final BillService service;
-    private final BillMapper mapper;
 
     @PostMapping
-    @Operation(summary = "Save", description = "Cadastrar nova conta.")
+    @Operation(summary = "Save Bill", description = "Cadastrar nova conta.")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Conta registrada com sucesso."),
             @ApiResponse(responseCode = "409", description = "Conta com estas informações já foi cadastrada!")
     })
-    public ResponseEntity<Object> save(@RequestBody @Valid SaveBillDTO saveBillDTO) {
+    public ResponseEntity<Object> saveBill(@RequestBody @Valid SaveBillDTO saveBillDTO) {
         try {
             var savedBill = service.save(saveBillDTO);
             var location = ServletUriComponentsBuilder
@@ -50,13 +49,13 @@ public class BillController {
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Update", description = "Atualizar conta existente.")
+    @Operation(summary = "Update Bill", description = "Atualizar conta existente.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Conta atualizada com sucesso."),
             @ApiResponse(responseCode = "404", description = "Conta não encontrada."),
             @ApiResponse(responseCode = "409", description = "Conta com estas informações já foi cadastrada!")
     })
-    public ResponseEntity<Object> update(
+    public ResponseEntity<Object> updateBill(
             @PathVariable("id") UUID billId,
             @RequestBody @Valid UpdateBillDTO updateBillDTO
     ) {
@@ -68,6 +67,25 @@ public class BillController {
             return ResponseEntity.status(errorResponse.status()).body(errorResponse);
         } catch (AlreadyRegisteredBillException exception) {
             var errorResponse = ErrorResponseDTO.conflit("Conta com estas informações já foi cadastrada!");
+            return ResponseEntity.status(errorResponse.status()).body(errorResponse);
+        }
+    }
+
+    @PatchMapping("/{id}/status")
+    @Operation(summary = "Update Bill Status", description = "Atualizar apenas o status da conta.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Status atualizado com sucesso."),
+            @ApiResponse(responseCode = "404", description = "Conta não encontrada.")
+    })
+    public ResponseEntity<Object> updateBillStatus(
+            @PathVariable("id") UUID billId,
+            @RequestBody @Valid UpdateBillStatusDTO updateBillStatusDTO
+    ) {
+        try {
+            service.updateBillStatus(billId, updateBillStatusDTO.status());
+            return ResponseEntity.ok().build();
+        } catch (BillNotFoundException exception) {
+            var errorResponse = ErrorResponseDTO.notFound("Conta não encontrada.");
             return ResponseEntity.status(errorResponse.status()).body(errorResponse);
         }
     }

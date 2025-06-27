@@ -33,4 +33,11 @@ public class BillService {
 
         repository.save(bill);
     }
+
+    public void updateBillStatus(UUID billId, String status) {
+        var bill = billValidator.checkExistingBill(billId);
+        bill.setStatus(status);
+
+        repository.save(bill);
+    }
 }
