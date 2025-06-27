@@ -67,9 +67,8 @@ public class BillService {
         return repository.findAll(Example.of(bill, matcher), pageable);
     }
 
-    public Bill findBillById(UUID id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new BillNotFoundException("Conta não encontrada."));
+    public Bill findBillById(UUID billId) {
+        return billValidator.checkExistingBill(billId);
     }
 
     public BigDecimal sumBillAmountByPaymentDateBetween(LocalDate startDate, LocalDate endDate) {
