@@ -1,9 +1,6 @@
 package com.project.payment.controller;
 
-import com.project.payment.controller.dto.ErrorResponseDTO;
-import com.project.payment.controller.dto.SaveBillDTO;
-import com.project.payment.controller.dto.UpdateBillDTO;
-import com.project.payment.controller.dto.UpdateBillStatusDTO;
+import com.project.payment.controller.dto.*;
 import com.project.payment.exception.AlreadyRegisteredBillException;
 import com.project.payment.exception.BillNotFoundException;
 import com.project.payment.exception.InvalidPeriodException;
@@ -20,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -155,5 +153,16 @@ public class BillController {
             var errorResponse = ErrorResponseDTO.invalidPeriod(exception.getMessage());
             return ResponseEntity.status(errorResponse.status()).body(errorResponse);
         }
+    }
+
+    @PostMapping("/uploads")
+    @Operation(summary = "Upload CSV", description = "Recebe um arquivo CSV codificado em base64 e salva cada linha no banco.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Dados salvos com sucesso."),
+            @ApiResponse(responseCode = "400", description = "Arquivo inválido.")
+    })
+    public ResponseEntity<Object> uploadCsvBase64(@RequestBody @Valid UploadCsvDTO uploadCsvDTO) {
+            service.processCsvBase64(uploadCsvDTO.fileBase64());
+            return ResponseEntity.status(201).build();
     }
 }
