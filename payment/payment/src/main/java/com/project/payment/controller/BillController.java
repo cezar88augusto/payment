@@ -156,13 +156,13 @@ public class BillController {
     }
 
     @PostMapping("/uploads")
-    @Operation(summary = "Upload CSV", description = "Recebe um arquivo CSV codificado em base64 e salva cada linha no banco.")
+    @Operation(summary = "Upload CSV file", description = "Recebe um arquivo CSV codificado em base64 e salva cada linha no banco de dados.")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Dados salvos com sucesso."),
             @ApiResponse(responseCode = "400", description = "Arquivo inválido.")
     })
     public ResponseEntity<Object> uploadCsvBase64(@RequestBody @Valid UploadCsvDTO uploadCsvDTO) {
-            service.processCsvBase64(uploadCsvDTO.fileBase64());
+            service.saveCsvBills(uploadCsvDTO.fileBase64());
             return ResponseEntity.status(201).build();
     }
 }
