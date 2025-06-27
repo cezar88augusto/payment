@@ -16,7 +16,7 @@ import static com.project.payment.constants.AppConstants.CsvFileConstants.*;
 @RequiredArgsConstructor
 public class CsvFileValidator {
 
-    private  final BillValidator billValidator;
+    private final BillValidator billValidator;
 
     public List<Bill> processCsvBase64(String base64) {
         var decodedFile = Base64.getDecoder().decode(base64);
