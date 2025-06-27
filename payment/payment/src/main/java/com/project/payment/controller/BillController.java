@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -99,16 +100,24 @@ public class BillController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Lista de contas retornada com sucesso.")
     })
-    public ResponseEntity<List<Bill>> getBills(
+    public ResponseEntity<Page<Bill>> getBills(
             @Parameter(description = "Filtra por data de vencimento (YYYY-MM-DD)")
             @RequestParam(value = "dueDate", required = false)
             LocalDate dueDate,
 
             @Parameter(description = "Filtra por texto contido na descrição")
             @RequestParam(value = "description", required = false)
-            String description
+            String description,
+
+            @Parameter(description = "Número da página")
+            @RequestParam(value = "pageNumber", defaultValue = "0")
+            int pageNumber,
+
+            @Parameter(description = "Tamanho da página")
+            @RequestParam(value = "pageSize", defaultValue = "10")
+            int pageSize
     ) {
-        var bills = service.findBills(dueDate, description);
+        var bills = service.findBills(dueDate, description, pageNumber, pageSize);
         return ResponseEntity.ok(bills);
     }
 

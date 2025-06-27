@@ -8,8 +8,7 @@ import com.project.payment.model.Bill;
 import com.project.payment.repository.BillRepository;
 import com.project.payment.validator.BillValidator;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -49,7 +48,7 @@ public class BillService {
         repository.save(bill);
     }
 
-    public List<Bill> findBills(LocalDate dueDate, String description) {
+    public Page<Bill> findBills(LocalDate dueDate, String description, int pageNumber, int pageSize) {
         var bill = Bill.builder()
                 .dueDate(dueDate)
                 .description(description)
@@ -61,7 +60,9 @@ public class BillService {
                 .withIgnoreCase()
                 .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
 
-        return repository.findAll(Example.of(bill, matcher));
+        var pageable = PageRequest.of(pageNumber, pageSize);
+
+        return repository.findAll(Example.of(bill, matcher), pageable);
     }
 
     public Bill findBillById(UUID id) {
