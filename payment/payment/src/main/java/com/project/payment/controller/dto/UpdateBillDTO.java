@@ -3,11 +3,13 @@ package com.project.payment.controller.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Schema
+@Builder
 public record UpdateBillDTO(
 
         LocalDate dueDate,
