@@ -7,8 +7,12 @@ import com.project.payment.model.Bill;
 import com.project.payment.repository.BillRepository;
 import com.project.payment.validator.BillValidator;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -39,5 +43,20 @@ public class BillService {
         bill.setStatus(status);
 
         repository.save(bill);
+    }
+
+    public List<Bill> findBills(LocalDate dueDate, String description) {
+        var bill = Bill.builder()
+                .dueDate(dueDate)
+                .description(description)
+                .build();
+
+        var matcher = ExampleMatcher
+                .matching()
+                .withIgnoreNullValues()
+                .withIgnoreCase()
+                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+
+        return repository.findAll(Example.of(bill, matcher));
     }
 }

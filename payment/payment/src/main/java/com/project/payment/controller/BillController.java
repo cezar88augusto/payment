@@ -6,8 +6,10 @@ import com.project.payment.controller.dto.UpdateBillDTO;
 import com.project.payment.controller.dto.UpdateBillStatusDTO;
 import com.project.payment.exceptions.AlreadyRegisteredBillException;
 import com.project.payment.exceptions.BillNotFoundException;
+import com.project.payment.model.Bill;
 import com.project.payment.service.BillService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,6 +19,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -88,5 +92,23 @@ public class BillController {
             var errorResponse = ErrorResponseDTO.notFound("Conta não encontrada.");
             return ResponseEntity.status(errorResponse.status()).body(errorResponse);
         }
+    }
+
+    @GetMapping
+    @Operation(summary = "List Bills", description = "Retorna uma lista de contas, com filtros opcionais por dueDate e description.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Lista de contas retornada com sucesso.")
+    })
+    public ResponseEntity<List<Bill>> getBills(
+            @Parameter(description = "Filtra por data de vencimento (YYYY-MM-DD)")
+            @RequestParam(value = "dueDate", required = false)
+            LocalDate dueDate,
+
+            @Parameter(description = "Filtra por texto contido na descrição")
+            @RequestParam(value = "description", required = false)
+            String description
+    ) {
+        var bills = service.findBills(dueDate, description);
+        return ResponseEntity.ok(bills);
     }
 }
