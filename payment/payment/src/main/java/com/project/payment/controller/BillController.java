@@ -111,4 +111,20 @@ public class BillController {
         var bills = service.findBills(dueDate, description);
         return ResponseEntity.ok(bills);
     }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Get Bill by ID", description = "Busca uma conta pelo ID.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Conta encontrada com sucesso."),
+            @ApiResponse(responseCode = "404", description = "Conta não encontrada.")
+    })
+    public ResponseEntity<Object> getBillById(@PathVariable UUID id) {
+        try {
+            var bill = service.findBillById(id);
+            return ResponseEntity.ok(bill);
+        } catch (BillNotFoundException exception) {
+            var errorResponse = ErrorResponseDTO.notFound("Conta não encontrada.");
+            return ResponseEntity.status(errorResponse.status()).body(errorResponse);
+        }
+    }
 }

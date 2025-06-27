@@ -3,6 +3,7 @@ package com.project.payment.service;
 import com.project.payment.controller.dto.SaveBillDTO;
 import com.project.payment.controller.dto.UpdateBillDTO;
 import com.project.payment.controller.mapper.BillMapper;
+import com.project.payment.exceptions.BillNotFoundException;
 import com.project.payment.model.Bill;
 import com.project.payment.repository.BillRepository;
 import com.project.payment.validator.BillValidator;
@@ -58,5 +59,10 @@ public class BillService {
                 .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
 
         return repository.findAll(Example.of(bill, matcher));
+    }
+
+    public Bill findBillById(UUID id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new BillNotFoundException("Conta não encontrada."));
     }
 }
