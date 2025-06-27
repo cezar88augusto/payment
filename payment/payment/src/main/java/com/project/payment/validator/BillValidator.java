@@ -1,10 +1,13 @@
 package com.project.payment.validator;
 
 import com.project.payment.exceptions.AlreadyRegisteredBillException;
+import com.project.payment.exceptions.BillNotFoundException;
 import com.project.payment.model.Bill;
 import com.project.payment.repository.BillRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -17,7 +20,12 @@ public class BillValidator {
                 .isPresent();
 
         if (isBillRegisterd) {
-            throw new AlreadyRegisteredBillException("Conta já cadastrada!");
+            throw new AlreadyRegisteredBillException("Conta com estas informações já foi cadastrada!");
         }
+    }
+
+    public Bill checkExistingBill(UUID billId) {
+       return repository.findById(billId)
+                .orElseThrow(() -> new BillNotFoundException("Conta não encontrada"));
     }
 }

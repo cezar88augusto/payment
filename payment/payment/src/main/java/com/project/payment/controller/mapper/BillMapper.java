@@ -1,9 +1,9 @@
 package com.project.payment.controller.mapper;
 
-import com.project.payment.controller.dto.BillDTO;
+import com.project.payment.controller.dto.SaveBillDTO;
+import com.project.payment.controller.dto.UpdateBillDTO;
 import com.project.payment.model.Bill;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
+import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
 public interface BillMapper {
@@ -13,5 +13,8 @@ public interface BillMapper {
     @Mapping(source = "amount", target = "amount")
     @Mapping(source = "description", target = "description")
     @Mapping(source = "status", target = "status")
-    Bill toBillEntity(BillDTO billDTO);
+    Bill toBillEntity(SaveBillDTO saveBillDTO);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateBillFromDTO(UpdateBillDTO dto, @MappingTarget Bill entity);
 }
