@@ -18,11 +18,13 @@ public class BillValidator {
     private final BillRepository repository;
 
     public void checkBillAlreadyRegistered(Bill bill) {
-        var isBillRegisterd = repository.findByDueDateAndAmountAndStatus(bill.getDueDate(), bill.getAmount(), bill.getStatus())
-                .isPresent();
+        var isBillRegistered = repository.findByDueDateAndAmountAndStatus(
+                bill.getDueDate(), bill.getAmount(), bill.getStatus()
+        ).isPresent();
 
-        if (isBillRegisterd) {
-            throw new AlreadyRegisteredBillException("Uma conta com estas informações já foi cadastrada!");
+        if (isBillRegistered) {
+            var messageError = String.format("A conta com a data de vencimento %s, valor %.2f e status '%s' já foi cadastrada!", bill.getDueDate(), bill.getAmount(), bill.getStatus());
+            throw new AlreadyRegisteredBillException(messageError);
         }
     }
 

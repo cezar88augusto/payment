@@ -1,6 +1,7 @@
 package com.project.payment.validator;
 
 import com.project.payment.model.Bill;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -12,7 +13,10 @@ import java.util.List;
 import static com.project.payment.constants.AppConstants.CsvFileConstants.*;
 
 @Component
+@RequiredArgsConstructor
 public class CsvFileValidator {
+
+    private  final BillValidator billValidator;
 
     public List<Bill> processCsvBase64(String base64) {
         var decodedFile = Base64.getDecoder().decode(base64);
@@ -31,6 +35,7 @@ public class CsvFileValidator {
             if (billLine.length < COLUMNS_NUMBER) continue;
 
             var bill = createBillEntity(billLine);
+            billValidator.checkBillAlreadyRegistered(bill);
 
             bills.add(bill);
         }

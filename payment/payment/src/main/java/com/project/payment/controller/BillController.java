@@ -17,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -159,10 +158,15 @@ public class BillController {
     @Operation(summary = "Upload CSV file", description = "Recebe um arquivo CSV codificado em base64 e salva cada linha no banco de dados.")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Dados salvos com sucesso."),
-            @ApiResponse(responseCode = "400", description = "Arquivo inválido.")
+            @ApiResponse(responseCode = "409", description = "Arquivo com conta(s) já cadastrada(s)")
     })
     public ResponseEntity<Object> uploadCsvBase64(@RequestBody @Valid UploadCsvDTO uploadCsvDTO) {
+        try {
             service.saveCsvBills(uploadCsvDTO.fileBase64());
             return ResponseEntity.status(201).build();
+        } catch (AlreadyRegisteredBillException exception) {
+            var errorResponse = ErrorResponseDTO.conflit(exception.getMessage());
+            return ResponseEntity.status(errorResponse.status()).body(errorResponse);
+        }
     }
 }
