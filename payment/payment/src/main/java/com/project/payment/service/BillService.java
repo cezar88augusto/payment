@@ -3,7 +3,7 @@ package com.project.payment.service;
 import com.project.payment.controller.dto.SaveBillDTO;
 import com.project.payment.controller.dto.UpdateBillDTO;
 import com.project.payment.controller.mapper.BillMapper;
-import com.project.payment.exceptions.BillNotFoundException;
+import com.project.payment.exception.BillNotFoundException;
 import com.project.payment.model.Bill;
 import com.project.payment.repository.BillRepository;
 import com.project.payment.validator.BillValidator;

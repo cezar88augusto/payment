@@ -1,8 +1,8 @@
 package com.project.payment.validator;
 
-import com.project.payment.exceptions.AlreadyRegisteredBillException;
-import com.project.payment.exceptions.BillNotFoundException;
-import com.project.payment.exceptions.InvalidPeriodException;
+import com.project.payment.exception.AlreadyRegisteredBillException;
+import com.project.payment.exception.BillNotFoundException;
+import com.project.payment.exception.InvalidPeriodException;
 import com.project.payment.model.Bill;
 import com.project.payment.repository.BillRepository;
 import lombok.RequiredArgsConstructor;

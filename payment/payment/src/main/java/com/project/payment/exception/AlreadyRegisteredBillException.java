@@ -1,4 +1,4 @@
-package com.project.payment.exceptions;
+package com.project.payment.exception;
 
 public class AlreadyRegisteredBillException extends RuntimeException {
 
