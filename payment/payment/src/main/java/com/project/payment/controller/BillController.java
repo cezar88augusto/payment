@@ -164,7 +164,6 @@ public class BillController {
     public ResponseEntity<Object> uploadCsvBase64(@RequestBody @Valid UploadCsvDTO uploadCsvDTO) {
         try {
             service.saveCsvBills(uploadCsvDTO.fileBase64());
-
             return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (AlreadyRegisteredBillException exception) {
             var errorResponse = ErrorResponseDTO.conflit(exception.getMessage());
