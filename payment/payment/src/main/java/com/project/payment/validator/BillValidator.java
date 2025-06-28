@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.Locale;
 import java.util.UUID;
 
 @Component
@@ -23,14 +24,14 @@ public class BillValidator {
         ).isPresent();
 
         if (isBillRegistered) {
-            var messageError = String.format("A conta com a data de vencimento %s, valor %.2f e status '%s' já foi cadastrada!", bill.getDueDate(), bill.getAmount(), bill.getStatus());
+            var messageError = String.format(Locale.US, "A conta com a data de vencimento %s, valor %.2f e status '%s' já foi cadastrada!", bill.getDueDate(), bill.getAmount(), bill.getStatus());
             throw new AlreadyRegisteredBillException(messageError);
         }
     }
 
     public Bill checkExistingBill(UUID billId) {
         return repository.findById(billId)
-                .orElseThrow(() -> new BillNotFoundException("Conta não encontrada"));
+                .orElseThrow(() -> new BillNotFoundException("Conta não encontrada."));
     }
 
     public void validateSearchPeriodForSumOfBills(LocalDate startDate, LocalDate endDate) {
