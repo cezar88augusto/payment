@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -61,7 +62,7 @@ public class BillController {
     ) {
         try {
             service.updateBill(billId, updateBillDTO);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (BillNotFoundException exception) {
             var errorResponse = ErrorResponseDTO.notFound(exception.getMessage());
             return ResponseEntity.status(errorResponse.status()).body(errorResponse);
@@ -163,7 +164,8 @@ public class BillController {
     public ResponseEntity<Object> uploadCsvBase64(@RequestBody @Valid UploadCsvDTO uploadCsvDTO) {
         try {
             service.saveCsvBills(uploadCsvDTO.fileBase64());
-            return ResponseEntity.status(201).build();
+
+            return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (AlreadyRegisteredBillException exception) {
             var errorResponse = ErrorResponseDTO.conflit(exception.getMessage());
             return ResponseEntity.status(errorResponse.status()).body(errorResponse);
