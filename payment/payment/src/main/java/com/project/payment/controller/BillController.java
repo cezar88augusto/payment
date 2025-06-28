@@ -52,7 +52,7 @@ public class BillController {
     @PutMapping("/{id}")
     @Operation(summary = "Update Bill", description = "Atualizar conta existente.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Conta atualizada com sucesso."),
+            @ApiResponse(responseCode = "204", description = "Conta atualizada com sucesso."),
             @ApiResponse(responseCode = "404", description = "Conta não encontrada."),
             @ApiResponse(responseCode = "409", description = "Conta com estas informações já foi cadastrada!")
     })
@@ -62,7 +62,7 @@ public class BillController {
     ) {
         try {
             service.updateBill(billId, updateBillDTO);
-            return ResponseEntity.status(HttpStatus.CREATED).build();
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } catch (BillNotFoundException exception) {
             var errorResponse = ErrorResponseDTO.notFound(exception.getMessage());
             return ResponseEntity.status(errorResponse.status()).body(errorResponse);
@@ -75,7 +75,7 @@ public class BillController {
     @PatchMapping("/{id}/status")
     @Operation(summary = "Update Bill Status", description = "Atualizar apenas o status da conta.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Status atualizado com sucesso."),
+            @ApiResponse(responseCode = "204", description = "Status atualizado com sucesso."),
             @ApiResponse(responseCode = "404", description = "Conta não encontrada.")
     })
     public ResponseEntity<Object> updateBillStatus(
@@ -84,7 +84,7 @@ public class BillController {
     ) {
         try {
             service.updateBillStatus(billId, updateBillStatusDTO.status());
-            return ResponseEntity.ok().build();
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } catch (BillNotFoundException exception) {
             var errorResponse = ErrorResponseDTO.notFound(exception.getMessage());
             return ResponseEntity.status(errorResponse.status()).body(errorResponse);
