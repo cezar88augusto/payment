@@ -8,4 +8,3 @@ public record UploadCsvDTO(
         String fileBase64
 ) {
 }
-
