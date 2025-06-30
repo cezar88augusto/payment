@@ -1,5 +1,6 @@
 package com.project.payment.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -14,11 +15,17 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 public class SecurityConfig {
 
+    @Value("${spring.security.username}")
+    private String username;
+
+    @Value("${spring.security.password}")
+    private String password;
+
     @Bean
     public UserDetailsService userDetailsService() {
         UserDetails user = User
-                .withUsername("admin")
-                .password("{noop}1234")
+                .withUsername(username)
+                .password("{noop}" + password)
                 .roles("USER")
                 .build();
 

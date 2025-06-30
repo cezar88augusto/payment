@@ -10,3 +10,6 @@ spring:
     show-sql: false
     properties:
       hibernate.format_sql: true
+  security:
+    username: admin
+    password: 1234
