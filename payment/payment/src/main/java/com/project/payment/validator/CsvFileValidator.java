@@ -43,11 +43,11 @@ public class CsvFileValidator {
 
     private Bill createBillEntity(String[] column) {
         return Bill.builder()
-                .dueDate(LocalDate.parse(column[DUE_DATE_COLUMN].trim()))
-                .paymentDate(LocalDate.parse(column[PAYMENT_DATE_COLUMN].trim()))
-                .amount(new BigDecimal(column[AMOUNT_COLUMN].trim()))
-                .description(column[DESCRIPTION_COLUMN].trim())
-                .status(column[STATUS_COLUMN].trim())
+                .dueDate(LocalDate.parse(column[DUE_DATE_COLUMN]))
+                .paymentDate(LocalDate.parse(column[PAYMENT_DATE_COLUMN]))
+                .amount(new BigDecimal(column[AMOUNT_COLUMN]))
+                .description(column[DESCRIPTION_COLUMN])
+                .status(column[STATUS_COLUMN])
                 .build();
     }
 
