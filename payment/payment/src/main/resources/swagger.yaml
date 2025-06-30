@@ -1,0 +1,218 @@
+openapi: 3.0.1
+info:
+  title: Payment API
+  description: API para gerenciamento de contas de pagamento.
+  version: 1.0.0
+paths:
+  /payments:
+    post:
+      summary: Save Bill
+      operationId: saveBill
+      description:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaveBillDTO'
+      responses:
+        201:
+          description: Conta registrada com sucesso.
+        409:
+          description: Conta com estas informações já foi cadastrada.
+    get:
+      summary: List Bills
+      operationId: getBills
+      parameters:
+        - $ref: '#/components/parameters/DueDate'
+        - $ref: '#/components/parameters/Description'
+        - $ref: '#/components/parameters/PageNumber'
+        - $ref: '#/components/parameters/PageSize'
+      responses:
+        200:
+          description: Lista de contas retornada com sucesso.
+
+  /payments/{id}:
+    get:
+      summary: Get Bill by ID
+      operationId: getBillById
+      parameters:
+        - $ref: '#/components/parameters/BillId'
+      responses:
+        200:
+          description: Conta encontrada com sucesso.
+        404:
+          description: Conta não encontrada.
+    put:
+      summary: Update Bill
+      operationId: updateBill
+      parameters:
+        - $ref: '#/components/parameters/BillId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateBillDTO'
+      responses:
+        204:
+          description: Conta atualizada com sucesso.
+        404:
+          description: Conta não encontrada.
+        409:
+          description: Conta com estas informações já foi cadastrada.
+
+  /payments/{id}/status:
+    patch:
+      summary: Update Bill Status
+      operationId: updateBillStatus
+      parameters:
+        - $ref: '#/components/parameters/BillId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateBillStatusDTO'
+      responses:
+        204:
+          description: Status atualizado com sucesso.
+        404:
+          description: Conta não encontrada.
+
+  /payments/total:
+    get:
+      summary: Total amount of bills by period
+      operationId: getTotalByPaymentPeriod
+      parameters:
+        - $ref: '#/components/parameters/StartDate'
+        - $ref: '#/components/parameters/EndDate'
+      responses:
+        200:
+          description: Soma do período calculada com sucesso.
+        400:
+          description: Parâmetros obrigatórios não informados.
+
+  /payments/uploads:
+    post:
+      summary: Upload CSV file
+      operationId: uploadCsvBase64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UploadCsvDTO'
+      responses:
+        201:
+          description: Dados salvos com sucesso.
+        409:
+          description: Arquivo com conta(s) já cadastrada(s)
+
+components:
+  parameters:
+    BillId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+    DueDate:
+      name: dueDate
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date
+
+    Description:
+      name: description
+      in: query
+      required: false
+      schema:
+        type: string
+
+    PageNumber:
+      name: pageNumber
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 0
+
+    PageSize:
+      name: pageSize
+      in: query
+      required: false
+      schema:
+        type: integer
+        default: 10
+
+    StartDate:
+      name: startDate
+      in: query
+      required: true
+      schema:
+        type: string
+        format: date
+
+    EndDate:
+      name: endDate
+      in: query
+      required: true
+      schema:
+        type: string
+        format: date
+
+  schemas:
+    SaveBillDTO:
+      type: object
+      properties:
+        dueDate:
+          type: string
+          format: date
+        paymentDate:
+          type: string
+          format: date
+        amount:
+          type: number
+          format: double
+          minimum: 0.01
+        description:
+          type: string
+          maxLength: 255
+        status:
+          type: string
+          maxLength: 50
+      required: [dueDate, paymentDate, amount, description, status]
+
+    UpdateBillDTO:
+      type: object
+      properties:
+        dueDate:
+          type: string
+          format: date
+        amount:
+          type: number
+          format: double
+          minimum: 0.01
+        description:
+          type: string
+          maxLength: 255
+
+    UpdateBillStatusDTO:
+      type: object
+      properties:
+        status:
+          type: string
+          maxLength: 50
+      required: [status]
+
+    UploadCsvDTO:
+      type: object
+      properties:
+        fileBase64:
+          type: string
+      required: [fileBase64]
