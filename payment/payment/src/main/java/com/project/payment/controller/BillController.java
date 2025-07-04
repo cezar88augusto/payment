@@ -159,7 +159,8 @@ public class BillController {
     @Operation(summary = "Upload CSV file", description = "Recebe um arquivo CSV codificado em base64 e salva cada linha no banco de dados.")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Dados salvos com sucesso."),
-            @ApiResponse(responseCode = "409", description = "Arquivo com conta(s) já cadastrada(s)")
+            @ApiResponse(responseCode = "409", description = "Arquivo com conta(s) já cadastrada(s)"),
+            @ApiResponse(responseCode = "409", description = "Arquivo com dado(s) inválido(s)")
     })
     public ResponseEntity<Object> uploadCsvBase64(@RequestBody @Valid UploadCsvDTO uploadCsvDTO) {
         try {
@@ -167,6 +168,9 @@ public class BillController {
             return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (AlreadyRegisteredBillException exception) {
             var errorResponse = ErrorResponseDTO.conflit(exception.getMessage());
+            return ResponseEntity.status(errorResponse.status()).body(errorResponse);
+        } catch (IllegalArgumentException exception) {
+            var errorResponse = ErrorResponseDTO.invalidCsvFile(exception.getMessage());
             return ResponseEntity.status(errorResponse.status()).body(errorResponse);
         }
     }

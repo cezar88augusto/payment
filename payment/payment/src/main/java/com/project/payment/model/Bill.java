@@ -19,6 +19,7 @@ import java.util.UUID;
 @Builder
 @EntityListeners(AuditingEntityListener.class)
 @EqualsAndHashCode
+@ToString
 @Table(name = "bill")
 public class Bill {
 

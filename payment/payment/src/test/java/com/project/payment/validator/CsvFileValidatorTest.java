@@ -28,18 +28,34 @@ class CsvFileValidatorTest {
     private static final LocalDate PAYMENT_DATE_2 = LocalDate.of(2025, 7, 6);
     private static final BigDecimal AMOUNT_2 = new BigDecimal("220.75");
     private static final String DESCRIPTION_2 = "Conta de água";
-    private static final String STATUS_2 = "PAGA";
+    private static final String STATUS_2 = "PAGO";
     private static final String MESSAGE_ERROR = "A conta com a data de vencimento %s, valor %.2f e status '%s' já foi cadastrada!";
 
     private static final String CSV_VALID_FILE_CONTENT = """
             2025-07-01,2025-07-02,150.00,Conta de energia,PENDENTE
-            2025-07-05,2025-07-06,220.75,Conta de água,PAGA
+            2025-07-05,2025-07-06,220.75,Conta de água,PAGO
             """;
 
     private static final String CSV_INVALID_FILE_CONTENT = """
             2025-07-01,2025-07-02,150.00,Conta de energia,PENDENTE
             INVALID,LINE,ONLY,FOUR
-            2025-07-05,2025-07-06,220.75,Conta de água,PAGA
+            2025-07-05,2025-07-06,220.75,Conta de água,PAGO
+            """;
+
+    private static final String CSV_INVALID_DUE_DATE = """
+            INVALID,2025-07-02,150.00,Conta de energia,PENDENTE
+            """;
+
+    private static final String CSV_INVALID_PAYMENT_DATE = """
+            2025-07-01,INVALID,150.00,Conta de energia,PENDENTE
+            """;
+
+    private static final String CSV_INVALID_AMOUNT = """
+            2025-07-01,2025-07-02,INVALID,Conta de energia,PENDENTE
+            """;
+
+    private static final String CSV_INVALID_STATUS = """
+            2025-07-01,2025-07-02,150.00,Conta de energia,INVALID
             """;
 
     @Mock
@@ -80,6 +96,42 @@ class CsvFileValidatorTest {
                 .when(billValidator).checkBillAlreadyRegistered(any(Bill.class));
 
         assertThrows(AlreadyRegisteredBillException.class, () -> validator.processCsvBase64(base64CsvFile));
+    }
+
+    @Test
+    void processCsvBase64_shouldThrowException_whenDueDateIsInvalid() {
+        var base64 = convertBase64(CSV_INVALID_DUE_DATE);
+
+        var exception = assertThrows(IllegalArgumentException.class, () -> validator.processCsvBase64(base64));
+
+        assertEquals("A linha 1 coluna Data Vencimento possui formato inválido.", exception.getMessage());
+    }
+
+    @Test
+    void processCsvBase64_shouldThrowException_whenPaymentDateIsInvalid() {
+        var base64 = convertBase64(CSV_INVALID_PAYMENT_DATE);
+
+        var exception = assertThrows(IllegalArgumentException.class, () -> validator.processCsvBase64(base64));
+
+        assertEquals("A linha 1 coluna Data Pagamento possui formato inválido.", exception.getMessage());
+    }
+
+    @Test
+    void processCsvBase64_shouldThrowException_whenAmountIsInvalid() {
+        var base64 = convertBase64(CSV_INVALID_AMOUNT);
+
+        var exception = assertThrows(IllegalArgumentException.class, () -> validator.processCsvBase64(base64));
+
+        assertEquals("A linha 1 coluna Total possui formato inválido.", exception.getMessage());
+    }
+
+    @Test
+    void processCsvBase64_shouldThrowException_whenStatusIsInvalid() {
+        var base64 = convertBase64(CSV_INVALID_STATUS);
+
+        var exception = assertThrows(IllegalArgumentException.class, () -> validator.processCsvBase64(base64));
+
+        assertEquals("A linha 1 coluna Status possui valor inválido: INVALID", exception.getMessage());
     }
 
     private String convertBase64(String file) {

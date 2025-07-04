@@ -15,4 +15,8 @@ public record ErrorResponseDTO(int status, String mensagem) {
     public static ErrorResponseDTO invalidPeriod(String messageError) {
         return new ErrorResponseDTO(HttpStatus.BAD_REQUEST.value(), messageError);
     }
+
+    public static ErrorResponseDTO invalidCsvFile(String messageError) {
+        return new ErrorResponseDTO(HttpStatus.UNPROCESSABLE_ENTITY.value(), messageError);
+    }
 }
