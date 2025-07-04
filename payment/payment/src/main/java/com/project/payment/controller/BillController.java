@@ -160,7 +160,7 @@ public class BillController {
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Dados salvos com sucesso."),
             @ApiResponse(responseCode = "409", description = "Arquivo com conta(s) já cadastrada(s)"),
-            @ApiResponse(responseCode = "409", description = "Arquivo com dado(s) inválido(s)")
+            @ApiResponse(responseCode = "422", description = "Arquivo com dado(s) inválido(s)")
     })
     public ResponseEntity<Object> uploadCsvBase64(@RequestBody @Valid UploadCsvDTO uploadCsvDTO) {
         try {
